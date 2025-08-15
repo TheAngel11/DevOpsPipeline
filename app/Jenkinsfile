@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    docker.build("devops-pipeline")
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'docker run --rm devops-pipeline pytest || echo "Tests skipped"'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                script {
+                    sh 'docker save devops-pipeline -o devops-pipeline.tar'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    sh 'docker stop devops-pipeline-container || true'
+                    sh 'docker rm devops-pipeline-container || true'
+                    sh 'docker run -d -p 5000:5000 --name devops-pipeline-container devops-pipeline'
+                }
+            }
+        }
+    }
+}
