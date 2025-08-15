@@ -1,4 +1,49 @@
 pipeline {
+    agent {
+        docker {
+            image 'docker:24.0.5'  
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+
+    environment {
+        IMAGE_NAME = "devops-pipeline"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'T'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo 'P'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'D'
+            }
+        }
+    }
+}
+
+/*pipeline {
     agent any
 
     stages {
@@ -41,4 +86,4 @@ pipeline {
             }
         }
     }
-}
+}*/
