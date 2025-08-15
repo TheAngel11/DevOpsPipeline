@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                checkout scm
+                git branch: 'main', 
+                url: 'https://github.com/TheAngel11/DevOpsPipeline'
             }
         }
 
